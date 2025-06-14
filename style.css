@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Code&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #d4d4d4;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(-45deg, #0d1117, #1f242c, #21262d, #1a1f26);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: rgba(22, 27, 34, 0.85);
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+}
+
+h1 {
+    color: #c9d1d9;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #8b949e;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 1.5px;
+}
+
+textarea {
+    width: calc(100% - 22px);
+    height: 200px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 0.95em;
+    resize: vertical;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #58a6ff;
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+}
+
+#deobfuscatedCode {
+    background-color: #161b22;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: #238636;
+    color: white;
+    border: 1px solid #2ea043;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    margin-bottom: 20px;
+}
+
+button:hover {
+    background-color: #2ea043;
+    box-shadow: 0 0 12px rgba(46, 160, 67, 0.6);
+}
+
+button:active {
+    background-color: #238636;
+    transform: translateY(1px);
+}
