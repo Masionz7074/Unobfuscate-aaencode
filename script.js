@@ -1,29 +1,29 @@
 function deobfuscateJJEncode(code) {
     const trimmedCode = code.trim();
 
+    if (!trimmedCode) {
+        return ""; 
+    }
+
     const varNameMatch = trimmedCode.match(/^([a-zA-Z0-9_$]+)/);
     if (!varNameMatch) {
         return "Error: Could not find a variable name at the start of the script.";
     }
     const varName = varNameMatch[1];
     
-    const escapedVarName = varName.replace(/[$]/g, '\\$&');
-    const payloadRegex = new RegExp(
-        escapedVarName +
-        '\\.\\$\\$\\+\\"\\\\\\"\"' +
-        '(.*)' +
-        '\\"\\\\\\"\"\\)\\(\\)\\(\\);\\s*$'
-    );
+    const startMarker = `${varName}.\$(${varName}.\$(`;
+    const endMarker = `)())();`;
 
-    const payloadMatch = trimmedCode.match(payloadRegex);
+    const startIndex = trimmedCode.indexOf(startMarker);
+    const endIndex = trimmedCode.lastIndexOf(endMarker);
 
-    if (!payloadMatch) {
-        return "Error: Script does not match the expected JJEncode structure. Could not find payload.";
+    if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
+        return "Error: Script does not match the expected JJEncode structure. Could not find execution wrapper.";
     }
 
-    const payloadExpression = payloadMatch[1];
-    const setupCode = trimmedCode.substring(0, payloadMatch.index);
-
+    const setupCode = trimmedCode.substring(0, startIndex);
+    const payloadExpression = trimmedCode.substring(startIndex + startMarker.length, endIndex);
+    
     try {
         const contextObject = new Function(`${setupCode}; return ${varName};`)();
         const deobfuscatedResult = new Function(varName, `return ${payloadExpression};`)(contextObject);
@@ -42,13 +42,8 @@ function handleDeobfuscation() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const deobfuscateButton = document.getElementById('deobfuscateButton');
-    const obfuscatedInput = document.getElementById('obfuscatedCode');
 
     if (deobfuscateButton) {
         deobfuscateButton.addEventListener('click', handleDeobfuscation);
     }
-    
-    obfuscatedInput.value = `nperma=~[];nperma={___:++nperma,$$$$:(![]+"")[nperma],__$:++nperma,$_$_:(![]+"")[nperma],_$_:++nperma,$_$$:({}+"")[nperma],$$_$:(nperma[nperma]+"")[nperma],_$$:++nperma,$$$_:(!""+"")[nperma],$__:++nperma,$_$:++nperma,$$__:({}+"")[nperma],$$_:++nperma,$$$:++nperma,$___:++nperma,$__$:++nperma};nperma.$_=(nperma.$_=nperma+"")[nperma.$_$]+(nperma._$=nperma.$_[nperma.__$])+(nperma.$$=(nperma.$+"")[nperma.__$])+((!nperma)+"")[nperma._$$]+(nperma.__=nperma.$_[nperma.$$_])+(nperma.$=(!""+"")[nperma.__$])+(nperma._=(!""+"")[nperma._$_])+nperma.$_[nperma.$_$]+nperma.__+nperma._$+nperma.$;nperma.$$=nperma.$+(!""+"")[nperma._$$]+nperma.__+nperma._+nperma.$+nperma.$$;nperma.$=(nperma.___)[nperma.$_][nperma.$_];nperma.$(nperma.$(nperma.$$+"\""+nperma.$$__+nperma._$+"\\"+nperma.__$+nperma.$_$+nperma.$$_+"\\"+nperma.__$+nperma.$$_+nperma._$$+nperma._$+(![]+"")[nperma._$_]+nperma.$$$_+"."+(![]+"")[nperma._$_]+nperma._$+"\\"+nperma.__$+nperma.$__+nperma.$$$+"(\\\"\\"+nperma.__$+nperma.__$+nperma.$$_+"\\"+nperma.__$+nperma.$$_+nperma.___+nperma.$$$_+"\\"+nperma.__$+nperma.$$_+nperma._$_+"\\"+nperma.__$+nperma.$_$+nperma.$_$+nperma.$_$_+"\\"+nperma.__$+nperma._$_+nperma.$__+"\\"+nperma.__$+nperma.$$_+nperma.$$$+"\\"+nperma.__$+nperma.$$_+nperma._$$+nperma.__+"\\\")\\"+nperma.$$$+nperma._$$+"\"")())();`;
-
-    handleDeobfuscation();
 });
