@@ -5,93 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JJEncode Deobfuscator</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Code&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'Roboto', sans-serif;
+            color: #d4d4d4;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(-45deg, #0d1117, #1f242c, #21262d, #1a1f26);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 900px;
             margin: 20px auto;
-            padding: 15px;
-            border: 1px solid #eee;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            background-color: #f9f9f9;
+            padding: 30px;
+            background-color: rgba(22, 27, 34, 0.85);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
         }
+
         h1 {
-            color: #333;
+            color: #c9d1d9;
             text-align: center;
+            text-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+            margin-bottom: 25px;
+            font-weight: 700;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
-            color: #555;
+            color: #8b949e;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 1.5px;
         }
+
         textarea {
-            width: calc(100% - 20px);
-            height: 180px;
-            margin-bottom: 15px;
+            width: calc(100% - 22px);
+            height: 200px;
+            margin-bottom: 20px;
             padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9em;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.95em;
             resize: vertical;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+
+        textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+        }
+
+        #deobfuscatedCode {
+            background-color: #161b22;
+        }
+
         button {
             display: block;
             width: 100%;
             padding: 12px 20px;
-            background-color: #007bff;
+            background-color: #238636;
             color: white;
-            border: none;
-            border-radius: 4px;
+            border: 1px solid #2ea043;
+            border-radius: 6px;
             font-size: 1.1em;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-bottom: 20px;
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: #2ea043;
+            box-shadow: 0 0 12px rgba(46, 160, 67, 0.6);
         }
-        #deobfuscatedCode {
-            background-color: #e9e9e9;
-            color: #333;
+
+        button:active {
+            background-color: #238636;
+            transform: translateY(1px);
         }
     </style>
 </head>
 <body>
-    <h1>JJEncode Deobfuscator</h1>
+    <div class="container">
+        <h1>JJEncode Deobfuscator</h1>
 
-    <label for="obfuscatedCode">Paste Obfuscated JavaScript:</label>
-    <textarea id="obfuscatedCode" placeholder="Paste your jjencode'd script here..."></textarea>
+        <label for="obfuscatedCode">Obfuscated Source</label>
+        <textarea id="obfuscatedCode" placeholder="Paste your jjencode'd script here..."></textarea>
 
-    <button onclick="deobfuscate()">Deobfuscate</button>
+        <button id="deobfuscateButton">Deobfuscate</button>
 
-    <label for="deobfuscatedCode">Deobfuscated JavaScript:</label>
-    <textarea id="deobfuscatedCode" readonly></textarea>
+        <label for="deobfuscatedCode">Deobfuscated Result</label>
+        <textarea id="deobfuscatedCode" readonly></textarea>
+    </div>
 
     <script>
         function deobfuscateJJEncode(obfuscatedCode) {
             obfuscatedCode = obfuscatedCode.trim();
-            const fullRegex = /^(nperma=~\[\];nperma=\{.*?nperma\.\$\=\(nperma\.\_\_\_\)\[nperma\.\$\_\]\[nperma\.\$\_\];\s*)nperma\.\$\(nperma\.\$\(nperma\.\$\$\+\"\\\"\"(.*?)\"\\\"\")\)\(\)\(\);\s*$/s;
+            const fullRegex = /^([a-zA-Z0-9_$]+)=~\[\];((?:\1|\w|\$|\{|\}|\(|\)|\[|\]|=|\+|<|>|\"|'|!|~|:|\.|;|\s)+)\s*\1\.\$\(\1\.\$\(\1\.\$\$\+\"\\\"\"(.*?)\"\\\"\")\)\(\)\(\);\s*$/s;
             const match = obfuscatedCode.match(fullRegex);
 
             if (!match) {
-                return "Error: Input does not match the expected JJEncode pattern.";
+                return "Error: Input does not match the expected JJEncode pattern. Please ensure you have pasted the entire script.";
             }
-
-            const setupCode = match[1];
-            const r_expression = match[2];
-
-            let nperma = {};
+            
+            const varName = match[1];
+            const setupCode = match[2];
+            const payloadExpression = match[3];
 
             try {
                 const setupFunction = new Function(`
-                    let nperma;
                     ${setupCode}
-                    return nperma;
+                    return ${varName};
                 `);
-                nperma = setupFunction();
+                const contextObject = setupFunction();
 
-                const payloadFunction = new Function('nperma', `return ${r_expression};`);
-                const deobfuscatedResult = payloadFunction(nperma);
+                const payloadFunction = new Function(varName, `return ${payloadExpression};`);
+                const deobfuscatedResult = payloadFunction(contextObject);
 
                 return deobfuscatedResult;
             } catch (e) {
@@ -100,15 +149,16 @@
             }
         }
 
-        function deobfuscate() {
+        function handleDeobfuscation() {
             const obfuscatedCode = document.getElementById('obfuscatedCode').value;
             const deobfuscated = deobfuscateJJEncode(obfuscatedCode);
             document.getElementById('deobfuscatedCode').value = deobfuscated;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('deobfuscateButton').addEventListener('click', handleDeobfuscation);
             document.getElementById('obfuscatedCode').value = `nperma=~[];nperma={___:++nperma,$$$$:(![]+"")[nperma],__$:++nperma,$_$_:(![]+"")[nperma],_$_:++nperma,$_$$:({}+"")[nperma],$$_$:(nperma[nperma]+"")[nperma],_$$:++nperma,$$$_:(!""+"")[nperma],$__:++nperma,$_$:++nperma,$$__:({}+"")[nperma],$$_:++nperma,$$$:++nperma,$___:++nperma,$__$:++nperma};nperma.$_=(nperma.$_=nperma+"")[nperma.$_$]+(nperma._$=nperma.$_[nperma.__$])+(nperma.$$=(nperma.$+"")[nperma.__$])+((!nperma)+"")[nperma._$$]+(nperma.__=nperma.$_[nperma.$$_])+(nperma.$=(!""+"")[nperma.__$])+(nperma._=(!""+"")[nperma._$_])+nperma.$_[nperma.$_$]+nperma.__+nperma._$+nperma.$;nperma.$$=nperma.$+(!""+"")[nperma._$$]+nperma.__+nperma._+nperma.$+nperma.$$;nperma.$=(nperma.___)[nperma.$_][nperma.$_];nperma.$(nperma.$(nperma.$$+"\""+nperma.$$__+nperma._$+"\\"+nperma.__$+nperma.$_$+nperma.$$_+"\\"+nperma.__$+nperma.$$_+nperma._$$+nperma._$+(![]+"")[nperma._$_]+nperma.$$$_+"."+(![]+"")[nperma._$_]+nperma._$+"\\"+nperma.__$+nperma.$__+nperma.$$$+"(\\\"\\"+nperma.__$+nperma.__$+nperma.$$_+"\\"+nperma.__$+nperma.$$_+nperma.___+nperma.$$$_+"\\"+nperma.__$+nperma.$$_+nperma._$_+"\\"+nperma.__$+nperma.$_$+nperma.$_$+nperma.$_$_+"\\"+nperma.__$+nperma._$_+nperma.$__+"\\"+nperma.__$+nperma.$$_+nperma.$$$+"\\"+nperma.__$+nperma.$$_+nperma._$$+nperma.__+"\\\")\\"+nperma.$$$+nperma._$$+"\"")())();`;
-            deobfuscate();
+            handleDeobfuscation();
         });
     </script>
 </body>
